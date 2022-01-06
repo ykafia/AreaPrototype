@@ -11,7 +11,34 @@ Hierarchy:
         - ref!! b034d256-6e0c-4c90-8c73-c78118328263
         - ref!! a13b8558-196d-40b7-b369-6006dd31aee2
         - ref!! 6c7887a4-cbf2-446b-8c02-5a51694fb2e8
+        - ref!! 51f0727c-9b49-4d10-a6e9-198cf0eb7623
     Parts:
+        -   Entity:
+                Id: 51f0727c-9b49-4d10-a6e9-198cf0eb7623
+                Name: Point light
+                Components:
+                    cd6bd7a1f5a83a18fa0d81920eeb4d70: !TransformComponent
+                        Id: 17439884-d95e-4e20-996c-05a3ecb186c5
+                        Position: {X: 0.0, Y: 2.0, Z: 0.0}
+                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children: {}
+                    3b3c2b6a1d5b43c6175dc8c80c17b1d6: !LightComponent
+                        Id: 4ce3e19b-f620-4943-b9ca-e6dbe684d83a
+                        Type: !LightArea
+                            Color: !ColorRgbProvider
+                                Value: {R: 1.0, G: 1.0, B: 1.0}
+                            Shadow: null
+                            Texture: null
+                            Intensity: 1.0
+                            TwoSided: false
+                            Scale: {X: 1.0, Y: 1.0}
+                            Range: 3.0
+                            Square:
+                                - {X: 1.0, Y: 1.0, Z: 0.0}
+                                - {X: 1.0, Y: -1.0, Z: 0.0}
+                                - {X: -1.0, Y: -1.0, Z: 0.0}
+                                - {X: -1.0, Y: 1.0, Z: 0.0}
         -   Entity:
                 Id: 6c7887a4-cbf2-446b-8c02-5a51694fb2e8
                 Name: Sphere

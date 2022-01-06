@@ -1,0 +1,43 @@
+shader LightArea : LightUtil, LightStream, PositionStream4
+{
+    struct AreaLightData
+    {
+        float3 PositionWS;
+        float3 Direction;
+        float2 Scale;
+        float  Range;
+        [Color]
+        float3 Color;
+    };
+
+    struct AreatLightDataInternal
+    {
+        float3 PositionWS;
+        float3 DirectionWS;
+        float2 Scale;
+        float  Range;
+        [Color]
+        float3 Color;
+    };
+
+    void ProcessLight(AreaLightDataInternal light)
+    {
+        float3 lightVectorNorm;
+        float attenuation = ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
+
+        streams.lightPositionWS = light.PositionWS;
+        streams.lightColor = light.Color;
+        streams.lightAttenuation = attenuation;
+        streams.lightDirectionWS = lightVectorNorm;
+    }
+
+    float ComputeAttenuation(AreaLightDataInternal light, float3 position, inout float3 lightVectorNorm)
+    {
+        float3 lightVector = light.PositionWS - position;
+        float lightVectorLength = length(lightVector);
+        lightVectorNorm = lightVector / lightVectorLength;
+
+        float lightInvSquareRadius = light.InvSquareRadius;
+        return GetDistanceAttenuation(lightVectorLength, lightInvSquareRadius);
+    }
+};
