@@ -2,12 +2,13 @@ using Stride.Core.Mathematics;
 
 namespace AreaPrototype
 {
-    public struct AreaLightData
+    public struct SphereLightData
     {
         public Vector3 PositionWS;
+        float padding0;
         public Vector3 DirectionWS;
-        public Vector2 Scale;
-        public float  Range;
+        float padding1;
         public Color3 Color;
+        public float  Radius;
     }
 }

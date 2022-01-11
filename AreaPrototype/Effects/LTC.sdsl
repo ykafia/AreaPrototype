@@ -1,4 +1,4 @@
-shader LTC
+shader LTC : Texturing, Math
 {
     
     float2 LTC_Coords(float cosTheta, float roughness)
@@ -13,15 +13,20 @@ shader LTC
         return coords;
     }
 
-    float3x3 LTC_Matrix(sampler2D texLSDMat, float2 coord)
+    float3x3 LTC_Matrix(float2 coord)
     {
         // load inverse matrix
-        float4 t = texture2D(texLSDMat, coord);
-        float3x3 Minv = float3x3_from_columns(
-            float3(1,     0, t.y),
-            float3(  0, t.z,   0),
-            float3(t.w,   0, t.x)
-        );
+        float4 t = Texture0.Sample(PointSampler, coord);
+        // float3x3 Minv = float3x3(
+        //     float3(1,     0, t.y),
+        //     float3(  0, t.z,   0),
+        //     float3(t.w,   0, t.x)
+        // );
+        float3x3 Minv = {
+            1,   0,     t.w,
+            0,   t.z,   0,
+            t.y, 0,     t.x
+        };
 
         return Minv;
     }
@@ -149,15 +154,21 @@ shader LTC
     }
 
     float3 LTC_Evaluate(
-        float3 N, float3 V, float3 P, float3x3 Minv, float4 points[4], bool twoSided, sampler2D texFilteredMap, bool textured)
+        float3 N, float3 V, float3 P, float3x3 Minv, float4 points[4], bool twoSided, bool textured)
     {
         // construct orthonormal basis around N
-        float3 T1, T2;
+        float3 T1 = 0;
+        float3 T2 = 0;
         T1 = normalize(V - N*dot(V, N));
         T2 = cross(N, T1);
 
         // rotate area light in (T1, T2, R) basis
-        Minv = mul(Minv, float3x3_from_rows(T1, T2, N));
+        float3x3 tmp = {
+            T1.x,T1.y,T1.z, 
+            T2.x,T2.y,T2.z, 
+            N.x, N.y, N.z
+        };
+        Minv = mul(Minv, tmp);
 
         // polygon (allocate 5 vertices for clipping)
         float3 L[5];
@@ -170,7 +181,7 @@ shader LTC
         float3 textureLight = float3(1, 1, 1);
         if(textured)
         {
-            textureLight = FetchDiffuseFilteredTexture(texFilteredMap, L[0], L[1], L[2], L[3]);
+            // textureLight = FetchDiffuseFilteredTexture(texFilteredMap, L[0], L[1], L[2], L[3]);
         }
 
         int n;
@@ -208,4 +219,4 @@ shader LTC
         return Lo_i;
     }
 
-}
+};

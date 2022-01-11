@@ -8,8 +8,8 @@ using Buffer = Stride.Graphics.Buffer;
 
 namespace AreaPrototype
 {
-    public static partial class LightAreaGroupKeys
+    public static partial class LightSphereGroupKeys
     {
-        public static readonly ValueParameterKey<AreaLightData> Lights = ParameterKeys.NewValue<AreaLightData>();
+        public static readonly ValueParameterKey<SphereLightData> Lights = ParameterKeys.NewValue<SphereLightData>();
     }
 }

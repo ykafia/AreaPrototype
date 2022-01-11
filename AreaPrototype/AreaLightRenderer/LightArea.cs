@@ -12,21 +12,20 @@ namespace AreaPrototype
     /// <summary>
     /// An Area light.
     /// </summary>
-    [DataContract("LightArea")]
-    [Display("Area")]
-    public class LightArea : DirectLightBase
+    [DataContract("LightQuad")]
+    [Display("Quad")]
+    public class LightQuad : DirectLightBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightArea"/> class.
+        /// Initializes a new instance of the <see cref="LightQuad"/> class.
         /// </summary>
-        public LightArea()
+        public LightQuad()
         {
             Range = 1.0f;
-            // Shadow = new LightAreaShadowMap()
-            // {
-            //     Size = LightShadowMapSize.Small,
-            //     Type = LightAreaShadowMapType.CubeMap,
-            // };
+            Shadow = new LightSphereShadowMap()
+            {
+                Size = LightShadowMapSize.Small
+            };
         }
         // public Texture Texture;
         public float Intensity {get;set;}

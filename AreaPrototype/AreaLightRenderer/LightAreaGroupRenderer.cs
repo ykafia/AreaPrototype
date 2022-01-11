@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Stride.Core.Collections;
 using Stride.Core.Mathematics;
 using Stride.Rendering;
@@ -10,9 +12,9 @@ using Stride.Shaders;
 namespace AreaPrototype
 {
     /// <summary>
-    /// Light renderer for <see cref="LightArea"/>.
+    /// Light renderer for <see cref="LightSphere"/>.
     /// </summary>
-    public class LightAreaGroupRenderer : LightGroupRendererShadow
+    public class LightSphereGroupRenderer : LightGroupRendererShadow
     {
         // private readonly ShadowComparer shadowComparer = new ShadowComparer();
         private FastListStruct<LightDynamicEntry> processedLights = new FastListStruct<LightDynamicEntry>(8);
@@ -39,7 +41,7 @@ namespace AreaPrototype
             }
         }
 
-        public override Type[] LightTypes { get; } = { typeof(LightArea) };
+        public override Type[] LightTypes { get; } = { typeof(LightSphere) };
 
         public override LightShaderGroupDynamic CreateLightShaderGroup(RenderDrawContext context, ILightShadowMapShaderGroupData shadowShaderGroupData)
         {
@@ -158,7 +160,7 @@ namespace AreaPrototype
                 {
                     nextLight = parameters.LightCollection[parameters.LightIndices[j]];
                     
-                    if (nextLight.Type is LightArea AreaLight)
+                    if (nextLight.Type is LightSphere AreaLight)
                     {
                         // if (AreaLight.ProjectiveTexture != null) // TODO: Remove this branch?!
                         // {
@@ -345,8 +347,8 @@ namespace AreaPrototype
         private class AreaLightShaderGroup : LightShaderGroupDynamic
         {
             private ValueParameterKey<int> countKey;
-            private ValueParameterKey<AreaLightData> lightsKey;
-            private FastListStruct<AreaLightData> lightsData = new FastListStruct<AreaLightData>(8);
+            private ValueParameterKey<SphereLightData> lightsKey;
+            private FastListStruct<SphereLightData> lightsData = new FastListStruct<SphereLightData>(8);
             private readonly object applyLock = new object();
 
             public ITextureProjectionShaderGroupData TextureProjectionShaderGroupData { get; }
@@ -360,10 +362,10 @@ namespace AreaPrototype
             public override void UpdateLayout(string compositionName)
             {
                 base.UpdateLayout(compositionName);
-                TextureProjectionShaderGroupData?.UpdateLayout(compositionName);
+                // TextureProjectionShaderGroupData?.UpdateLayout(compositionName);
 
                 countKey = DirectLightGroupPerDrawKeys.LightCount.ComposeWith(compositionName);
-                lightsKey = LightAreaGroupKeys.Lights.ComposeWith(compositionName);
+                lightsKey = LightSphereGroupKeys.Lights.ComposeWith(compositionName);
             }
 
             protected override void UpdateLightCount()
@@ -376,7 +378,7 @@ namespace AreaPrototype
                 // Old fixed path kept in case we need it again later
                 //mixin.Mixins.Add(new ShaderClassSource("LightAreaGroup", LightCurrentCount));
                 //mixin.Mixins.Add(new ShaderClassSource("DirectLightGroupFixed", LightCurrentCount));
-                mixin.Mixins.Add(new ShaderClassSource("LightAreaGroup", LightCurrentCount));   // Add the base shader for the light group.
+                mixin.Mixins.Add(new ShaderClassSource("LightSphereGroup", LightCurrentCount));   // Add the base shader for the light group.
                 // ShadowGroup?.ApplyShader(mixin);    // Add the shader for shadow mapping.
                 // TextureProjectionShaderGroupData?.ApplyShader(mixin);   // Add the shader for texture projection.
 
@@ -409,18 +411,22 @@ namespace AreaPrototype
                     for (int i = 0; i < currentLights.Count; i++)
                     {
                         var light = currentLights[i].Light;
-                        var boundingGet = typeof(RenderLight).GetField("BoundingBox");
+                        var boundingGet = typeof(RenderLight)
+                            .GetFields(
+                                BindingFlags.Instance | 
+                                BindingFlags.NonPublic |
+                                BindingFlags.Public)
+                                .Where(x => x.Name.Contains("BoundingBox")).First();
                         var box = (BoundingBox)boundingGet.GetValue(light);
                         if (box.Intersects(ref boundingBox2))
                         {
-                            var AreaLight = (LightArea)light.Type;
-                            lightsData.Add(new AreaLightData
+                            var AreaLight = (LightSphere)light.Type;
+                            lightsData.Add(new SphereLightData
                             {
                                 PositionWS = light.Position,
                                 DirectionWS = light.Direction,
                                 // AngleOffsetAndInvSquareRadius = new Vector3(AreaLight.LightAngleScale, AreaLight.LightAngleOffset, AreaLight.InvSquareRange),
-                                Scale = AreaLight.Scale,
-                                Range = AreaLight.Range,
+                                Radius = AreaLight.Radius,
                                 Color = light.Color,
                             });
 
