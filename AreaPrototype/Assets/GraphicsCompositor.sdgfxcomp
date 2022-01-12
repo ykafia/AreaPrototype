@@ -83,6 +83,7 @@ RenderFeatures:
                     cf0c6bd4198b4cc4aaaab5b54870bdfd: !Stride.Rendering.Lights.LightSpotGroupRenderer,Stride.Rendering {}
                     451af18f3f5c4187cf3fe5f33feb46b1: !Stride.Rendering.LightProbes.LightProbeRenderer,Stride.Rendering {}
                     34d9c78cd399d168332b7e4a28f5f97e*: !AreaPrototype.LightSphereGroupRenderer,AreaPrototype {}
+                    8c935ac89da357d71e34ecbc076efa57*: !AreaPrototype.LightDiscGroupRenderer,AreaPrototype {}
                 ShadowMapRenderer: !Stride.Rendering.Shadows.ShadowMapRenderer,Stride.Rendering
                     Renderers:
                         7c3d3d4c86834c3551bacde2527b3836: !Stride.Rendering.Shadows.LightDirectionalShadowMapRenderer,Stride.Rendering

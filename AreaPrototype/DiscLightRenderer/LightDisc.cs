@@ -28,9 +28,12 @@ namespace AreaPrototype
             };
         }
         // public Texture Texture;
-        public float Intensity {get;set;}
         public bool TwoSided {get;set;}
+        public Vector3 PlaneNormal {get;set;}
         public float Range {get;set;}
+        public float Radius {get;set;}
+        public float Intensity {get;set;}
+
 
         public override bool HasBoundingBox => true;
 
@@ -43,7 +46,7 @@ namespace AreaPrototype
         public override BoundingBox ComputeBounds(Vector3 positionWS, Vector3 directionWS)
         {
             // return new BoundingBox(positionWS - Radius, positionWS + Radius);
-            return new(positionWS - Range  , positionWS + Range * Intensity);
+            return new(positionWS - 5 , positionWS + 5);
         }
        
         public override float ComputeScreenCoverage(RenderView renderView, Vector3 position, Vector3 direction)
@@ -52,9 +55,9 @@ namespace AreaPrototype
             Vector4.Transform(ref targetPosition, ref renderView.ViewProjection, out Vector4 projectedTarget);
 
             var d = Math.Abs(projectedTarget.W) + 0.00001f;
-            var r = Range;
+            var r = Radius;
 
-            // Handle correctly the case where the eye is inside the Disc
+            // Handle correctly the case where the eye is inside the sphere
             if (d < r)
                 return Math.Max(renderView.ViewSize.X, renderView.ViewSize.Y);
 
@@ -62,7 +65,7 @@ namespace AreaPrototype
             var pr = r * coTanFovBy2 / (Math.Sqrt(d * d - r * r) + 0.00001f);
 
             // Size on screen
-            return (float)pr * Math.Max(renderView.ViewSize.X, renderView.ViewSize.Y);
+            return (float)pr * Math.Max(renderView.ViewSize.X, renderView.ViewSize.Y) * 2;
         }
     }
 }

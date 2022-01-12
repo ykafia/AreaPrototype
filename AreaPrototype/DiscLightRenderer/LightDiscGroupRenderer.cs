@@ -424,9 +424,9 @@ namespace AreaPrototype
                             lightsData.Add(new DiscLightData
                             {
                                 PositionWS = light.Position,
-                                DirectionWS = light.Direction,
-                                // AngleOffsetAndInvSquareRadius = new Vector3(AreaLight.LightAngleScale, AreaLight.LightAngleOffset, AreaLight.InvSquareRange),
+                                PlaneNormalWS = AreaLight.PlaneNormal,
                                 Range = AreaLight.Range,
+                                Radius = AreaLight.Radius,
                                 Color = light.Color,
                             });
 

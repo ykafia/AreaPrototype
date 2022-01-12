@@ -25,6 +25,7 @@ Hierarchy:
                         Children:
                             94e3d4f2398f8b8d9473f4ea938b8dee: ref!! 17439884-d95e-4e20-996c-05a3ecb186c5
                             f21fe642d31d4cbaf47dabf9fad93b11: ref!! d4bedb6d-6e0b-4775-b52d-a2b18e4ab4c1
+                            98198bad704f6b8e3ee60bd4f34188bf: ref!! fb949df2-7491-47b2-bbca-151ef99ae2dd
                     3f97756e8699b034206f0d528f2c88ed: !AreaPrototype.MoveLights,AreaPrototype
                         Id: f01672bb-90e8-4537-ad71-cdf3b16b824d
                         InitPos: {X: 0.0, Y: 0.0, Z: 0.0}
@@ -51,6 +52,30 @@ Hierarchy:
                             Radius: 1.0
                         Intensity: 5.0
         -   Entity:
+                Id: 637ceb09-c25f-40da-ba37-4ffeb1e7eaf9
+                Name: DiscLight
+                Components:
+                    e7bdae1bb0ea826fbf5cfdd3255fbd91: !TransformComponent
+                        Id: fb949df2-7491-47b2-bbca-151ef99ae2dd
+                        Position: {X: 0.0, Y: 0.0, Z: 0.5}
+                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children: {}
+                    69838eda2fd93200686e04fdd11c8559: !LightComponent
+                        Id: 8f06dc8e-807b-4900-a42a-ab25fa3cb8ea
+                        Type: !LightDisc
+                            Color: !ColorRgbProvider
+                                Value: {R: 1.0, G: 1.0, B: 1.0}
+                            Shadow:
+                                Size: Small
+                                BiasParameters: {}
+                            TwoSided: false
+                            PlaneNormal: {X: 0.0, Y: 0.0, Z: -1.0}
+                            Range: 1.0
+                            Radius: 4.0
+                            Intensity: 5.0
+                        Intensity: 5.0
+        -   Entity:
                 Id: 69c76b62-5f38-4600-af3d-7cf85cad1bc6
                 Name: Point light
                 Components:
@@ -65,7 +90,6 @@ Hierarchy:
                         Type: !LightPoint
                             Color: !ColorRgbProvider
                                 Value: {R: 1.0, G: 1.0, B: 1.0}
-                            Radius: 1.0
                             Shadow:
                                 Size: Small
                                 BiasParameters: {}

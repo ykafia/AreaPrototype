@@ -23,47 +23,30 @@ shader LightDiscGroup<int TMaxLightCount> :
         // TODO: Workaraound for SPIR-V compiler. Revert later
         DiscLightDataInternal data;
         data.PositionWS = Lights[lightIndex].PositionWS;
-        data.DirectionWS = Lights[lightIndex].DirectionWS;
+        data.PlaneNormalWS = Lights[lightIndex].PlaneNormalWS;
         data.Radius = Lights[lightIndex].Radius;
+        data.Range = Lights[lightIndex].Range;
         data.Color = Lights[lightIndex].Color;
 
         ProcessLight(data);
     }
 
-    float ComputeIlluminance(float3 positionWS, float3 lightPositionWS, float radius, float3 normalWS)
+    float ComputeIlluminance(float3 positionWS, float3 lightPositionWS, float3 planeNormal, float radius, float3 normalWS)
     {
         float3 lunormalized = lightPositionWS - positionWS;
-
         float3 L = normalize(lunormalized);
         float sqrDist = dot(lunormalized, lunormalized);
 
         bool horizon = false;
         if(!horizon)
         {
-            float sqrLightRadius = radius * radius * 0.25;
+            // return PI * saturate(dot(planeNormal , -L)) * saturate(dot( normalWS , L ) ) / (sqrDist / ( radius * radius ) + 1);
+            float sqrLightRadius = radius * radius;
             return PI * (sqrLightRadius/(max(sqrLightRadius,sqrDist))) * saturate(dot(normalWS, L));
         }
         else
         {
-            
-            // Tilted patch to Disc equation
-            float Beta = acos( dot( normalWS , L ) ) ;
-            float H = sqrt( sqrDist ) ;
-            float h = H / radius ;
-            float x = sqrt( h * h - 1) ;
-            float y = -x * (1 / tan( Beta ) ) ;
-
-            float illuminance = 0;
-            if ( h * cos( Beta ) > 1)
-                illuminance = cos( Beta ) / ( h * h ) ;
-            else
-            {
-            illuminance = (1/(PI * h * h ) ) *
-                ( cos( Beta ) * acos( y ) - x * sin( Beta ) * sqrt(1 - y * y ) ) +
-                (1 / PI ) * atan( sin( Beta ) * sqrt(1 - y * y ) / x ) ;
-            }
-
-            return illuminance * PI ;
+           return 0;
         }
         
     }
@@ -75,7 +58,7 @@ shader LightDiscGroup<int TMaxLightCount> :
     {
         PrepareDirectLightCore(lightIndex);
 
-        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS,Lights[lightIndex].Radius, streams.normalWS);
+        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS,Lights[lightIndex].PlaneNormalWS, Lights[lightIndex].Radius, streams.normalWS);
 
         DiscLightDataInternal light = Lights[lightIndex];
 

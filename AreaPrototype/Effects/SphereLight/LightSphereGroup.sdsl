@@ -40,7 +40,7 @@ shader LightSphereGroup<int TMaxLightCount> :
         bool horizon = false;
         if(!horizon)
         {
-            float sqrLightRadius = radius * radius * 0.25;
+            float sqrLightRadius = radius * radius;
             return PI * (sqrLightRadius/(max(sqrLightRadius,sqrDist))) * saturate(dot(normalWS, L));
         }
         else

@@ -6,9 +6,11 @@ namespace AreaPrototype
     {
         public Vector3 PositionWS;
         float padding0;
-        public Vector3 DirectionWS;
+        public Vector3 PlaneNormalWS;
         float padding1;
         public Color3 Color;
-        public float  Range;
+        public float Range;
+        public float Radius;
+        public float Intensity;
     }
 }
