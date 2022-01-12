@@ -1,0 +1,99 @@
+shader LightDiscGroup<int TMaxLightCount> :
+    LTC,
+    Transformation,
+    DirectLightGroupPerDraw,    // Required for "PrepareDirectLightCore()", "PrepareDirectLight()", "ComputeAttenuation()" and other stuff.
+    LightDisc  // Required for "DiscLightData".
+    // LightDiscAttenuationDefault    // Required for "ComputeAttenuation()"
+{
+    cbuffer PerDraw.Lighting
+    {
+        DiscLightData Lights[TMaxLightCount];
+    }
+
+    override int GetMaxLightCount()
+    {
+        return TMaxLightCount;
+    }
+
+    /// <summary>
+    /// Compute the light color/direction for the specified index within this group
+    /// </summary>
+    override void PrepareDirectLightCore(int lightIndex)
+    {
+        // TODO: Workaraound for SPIR-V compiler. Revert later
+        DiscLightDataInternal data;
+        data.PositionWS = Lights[lightIndex].PositionWS;
+        data.DirectionWS = Lights[lightIndex].DirectionWS;
+        data.Radius = Lights[lightIndex].Radius;
+        data.Color = Lights[lightIndex].Color;
+
+        ProcessLight(data);
+    }
+
+    float ComputeIlluminance(float3 positionWS, float3 lightPositionWS, float radius, float3 normalWS)
+    {
+        float3 lunormalized = lightPositionWS - positionWS;
+
+        float3 L = normalize(lunormalized);
+        float sqrDist = dot(lunormalized, lunormalized);
+
+        bool horizon = false;
+        if(!horizon)
+        {
+            float sqrLightRadius = radius * radius * 0.25;
+            return PI * (sqrLightRadius/(max(sqrLightRadius,sqrDist))) * saturate(dot(normalWS, L));
+        }
+        else
+        {
+            
+            // Tilted patch to Disc equation
+            float Beta = acos( dot( normalWS , L ) ) ;
+            float H = sqrt( sqrDist ) ;
+            float h = H / radius ;
+            float x = sqrt( h * h - 1) ;
+            float y = -x * (1 / tan( Beta ) ) ;
+
+            float illuminance = 0;
+            if ( h * cos( Beta ) > 1)
+                illuminance = cos( Beta ) / ( h * h ) ;
+            else
+            {
+            illuminance = (1/(PI * h * h ) ) *
+                ( cos( Beta ) * acos( y ) - x * sin( Beta ) * sqrt(1 - y * y ) ) +
+                (1 / PI ) * atan( sin( Beta ) * sqrt(1 - y * y ) / x ) ;
+            }
+
+            return illuminance * PI ;
+        }
+        
+    }
+
+    /// <summary>
+    /// Compute the light color/direction for the specified index within this group
+    /// </summary>
+    override void PrepareDirectLight(int lightIndex)
+    {
+        PrepareDirectLightCore(lightIndex);
+
+        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS,Lights[lightIndex].Radius, streams.normalWS);
+
+        DiscLightDataInternal light = Lights[lightIndex];
+
+        // Compute NdotL
+        streams.NdotL = max(dot(streams.normalWS, streams.lightDirectionWS), 0.0001f);
+
+        // // Computes the shadowColor
+        streams.shadowColor = ComputeShadow(streams.PositionWS.xyz, lightIndex);
+
+        // // Compute the final color with NdotL
+        streams.lightColorNdotL = streams.lightColor * illuminance * 2 * streams.shadowColor * streams.NdotL * streams.lightDirectAmbientOcclusion;
+        streams.lightSpecularColorNdotL = streams.lightColorNdotL;
+
+        // Mask the light by the color of the projected texture:
+        streams.lightColorNdotL *= ComputeTextureProjection(streams.PositionWS.xyz, lightIndex);    // TODO: Modify "streams.lightColor" instead?
+
+        
+        float3 reflectionVectorWS = reflect(-streams.viewWS, streams.normalWS);
+        streams.lightSpecularColorNdotL *= ComputeSpecularTextureProjection(streams.PositionWS.xyz, reflectionVectorWS, lightIndex);
+    }
+};
