@@ -18,11 +18,13 @@ namespace AreaPrototype
         public override void Start()
         {
             // Initialization of the script.
+            InitPos = Entity.Transform.Position;
         }
 
         public override void Update()
         {
-            Entity.Transform.Position.Y = InitPos.Y + (float)Math.Abs(Math.Cos(Game.UpdateTime.Total.TotalSeconds));
+            // Entity.Transform.Position.Y = InitPos.Y + (float)Math.Cos(Game.UpdateTime.Total.TotalSeconds);
+            // DebugText.Print("Light Heigt : " + Entity.Transform.Position, new Int2(10,10));
         }
     }
 }

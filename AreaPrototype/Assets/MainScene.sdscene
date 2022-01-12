@@ -19,7 +19,7 @@ Hierarchy:
                 Components:
                     7ed77be80390c909c67cbe17ce7d156d: !TransformComponent
                         Id: 236c43d0-d349-4fd1-92c7-a9e0c737e8a9
-                        Position: {X: 0.0, Y: 1.0, Z: 0.0}
+                        Position: {X: 0.0, Y: 0.5, Z: 0.0}
                         Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
                         Scale: {X: 1.0, Y: 1.0, Z: 1.0}
                         Children:
@@ -34,7 +34,7 @@ Hierarchy:
                 Components:
                     cd6bd7a1f5a83a18fa0d81920eeb4d70: !TransformComponent
                         Id: 17439884-d95e-4e20-996c-05a3ecb186c5
-                        Position: {X: 0.0, Y: 0.0, Z: -1.0}
+                        Position: {X: -2.0, Y: 0.0, Z: 0.0}
                         Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
                         Scale: {X: 1.0, Y: 1.0, Z: 1.0}
                         Children: {}
@@ -46,7 +46,7 @@ Hierarchy:
                             Shadow:
                                 Size: Small
                                 BiasParameters: {}
-                            Intensity: 1.0
+                            Intensity: 5.0
                             TwoSided: false
                             Radius: 1.0
                         Intensity: 5.0
@@ -56,7 +56,7 @@ Hierarchy:
                 Components:
                     b3d307eb78cac2e9ecbda98344c876d9: !TransformComponent
                         Id: d4bedb6d-6e0b-4775-b52d-a2b18e4ab4c1
-                        Position: {X: 1.0, Y: 0.0, Z: 0.0}
+                        Position: {X: 2.0, Y: 0.0, Z: 0.0}
                         Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
                         Scale: {X: 1.0, Y: 1.0, Z: 1.0}
                         Children: {}
@@ -64,8 +64,8 @@ Hierarchy:
                         Id: cb641257-f91b-485f-8363-a765a935b35b
                         Type: !LightPoint
                             Color: !ColorRgbProvider
-                                Value: {R: 1.0, G: 0.0, B: 0.0}
-                            Radius: 5.0
+                                Value: {R: 1.0, G: 1.0, B: 1.0}
+                            Radius: 1.0
                             Shadow:
                                 Size: Small
                                 BiasParameters: {}

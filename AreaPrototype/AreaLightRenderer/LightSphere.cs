@@ -49,7 +49,7 @@ namespace AreaPrototype
         public override BoundingBox ComputeBounds(Vector3 positionWS, Vector3 directionWS)
         {
             // return new BoundingBox(positionWS - Radius, positionWS + Radius);
-            return new(positionWS - Radius , positionWS + Radius);
+            return new(positionWS - Radius * Intensity , positionWS + Radius * Intensity);
         }
        
         public override float ComputeScreenCoverage(RenderView renderView, Vector3 position, Vector3 direction)

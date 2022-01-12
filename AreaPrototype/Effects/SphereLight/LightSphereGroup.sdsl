@@ -30,18 +30,44 @@ shader LightSphereGroup<int TMaxLightCount> :
         ProcessLight(data);
     }
 
-    override float ComputeAttenuation(float3 position, int lightIndex)
+    float ComputeIlluminance(float3 positionWS, float3 lightPositionWS, float radius, float3 normalWS)
     {
-        // TODO: Workaraound for SPIR-V compiler. Revert later
-        SphereLightDataInternal data;
-        data.PositionWS = Lights[lightIndex].PositionWS;
-        data.DirectionWS = Lights[lightIndex].DirectionWS;
-        data.Radius = Lights[lightIndex].Radius;
+        float3 lunormalized = lightPositionWS - positionWS;
 
-        float3 lightVectorNorm;
-        return ComputeAttenuation(data, position, lightVectorNorm);
-        // return 5;
+        float3 L = normalize(lunormalized);
+        float sqrDist = dot(lunormalized, lunormalized);
+
+        bool horizon = false;
+        if(!horizon)
+        {
+            float sqrLightRadius = radius * radius * 0.25;
+            return PI * (sqrLightRadius/(max(sqrLightRadius,sqrDist))) * saturate(dot(normalWS, L));
+        }
+        else
+        {
+            
+            // Tilted patch to sphere equation
+            float Beta = acos( dot( normalWS , L ) ) ;
+            float H = sqrt( sqrDist ) ;
+            float h = H / radius ;
+            float x = sqrt( h * h - 1) ;
+            float y = -x * (1 / tan( Beta ) ) ;
+
+            float illuminance = 0;
+            if ( h * cos( Beta ) > 1)
+                illuminance = cos( Beta ) / ( h * h ) ;
+            else
+            {
+            illuminance = (1/(PI * h * h ) ) *
+                ( cos( Beta ) * acos( y ) - x * sin( Beta ) * sqrt(1 - y * y ) ) +
+                (1 / PI ) * atan( sin( Beta ) * sqrt(1 - y * y ) / x ) ;
+            }
+
+            return illuminance * PI ;
+        }
+        
     }
+
     /// <summary>
     /// Compute the light color/direction for the specified index within this group
     /// </summary>
@@ -49,17 +75,9 @@ shader LightSphereGroup<int TMaxLightCount> :
     {
         PrepareDirectLightCore(lightIndex);
 
+        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS,Lights[lightIndex].Radius, streams.normalWS);
 
         SphereLightDataInternal light = Lights[lightIndex];
-
-        float3 lunormalized = light.PositionWS - streams.PositionWS;
-
-        float3 L = normalize(lunormalized);
-        float sqrDistance = dot(lunormalized, lunormalized);
-
-        float sqrLightRadius = light.Radius * light.Radius;
-
-        float illuminance = PI * (sqrLightRadius/(max(sqrLightRadius,sqrDistance))) * saturate(dot(streams.normalWS, L));
 
         // Compute NdotL
         streams.NdotL = max(dot(streams.normalWS, streams.lightDirectionWS), 0.0001f);
@@ -68,7 +86,7 @@ shader LightSphereGroup<int TMaxLightCount> :
         streams.shadowColor = ComputeShadow(streams.PositionWS.xyz, lightIndex);
 
         // // Compute the final color with NdotL
-        streams.lightColorNdotL = streams.lightColor * illuminance * streams.shadowColor * streams.NdotL * streams.lightDirectAmbientOcclusion;
+        streams.lightColorNdotL = streams.lightColor * illuminance * 2 * streams.shadowColor * streams.NdotL * streams.lightDirectAmbientOcclusion;
         streams.lightSpecularColorNdotL = streams.lightColorNdotL;
 
         // Mask the light by the color of the projected texture:
