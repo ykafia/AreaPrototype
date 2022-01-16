@@ -26,6 +26,7 @@ Hierarchy:
                             94e3d4f2398f8b8d9473f4ea938b8dee: ref!! 17439884-d95e-4e20-996c-05a3ecb186c5
                             f21fe642d31d4cbaf47dabf9fad93b11: ref!! d4bedb6d-6e0b-4775-b52d-a2b18e4ab4c1
                             98198bad704f6b8e3ee60bd4f34188bf: ref!! fb949df2-7491-47b2-bbca-151ef99ae2dd
+                            d34bbf0b6bbfe5da71056fde7813f938: ref!! 00813dcc-2db6-43bd-896e-b6bef82c2854
                     3f97756e8699b034206f0d528f2c88ed: !AreaPrototype.MoveLights,AreaPrototype
                         Id: f01672bb-90e8-4537-ad71-cdf3b16b824d
                         InitPos: {X: 0.0, Y: 0.0, Z: 0.0}
@@ -57,8 +58,8 @@ Hierarchy:
                 Components:
                     e7bdae1bb0ea826fbf5cfdd3255fbd91: !TransformComponent
                         Id: fb949df2-7491-47b2-bbca-151ef99ae2dd
-                        Position: {X: 0.0, Y: 0.0, Z: 0.5}
-                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Position: {X: 0.0, Y: 0.0, Z: -2.0}
+                        Rotation: {X: 1.1238265E-08, Y: 1.0, Z: -4.912402E-16, W: -4.371139E-08}
                         Scale: {X: 1.0, Y: 1.0, Z: 1.0}
                         Children: {}
                     69838eda2fd93200686e04fdd11c8559: !LightComponent
@@ -70,9 +71,33 @@ Hierarchy:
                                 Size: Small
                                 BiasParameters: {}
                             TwoSided: false
-                            PlaneNormal: {X: 0.0, Y: 0.0, Z: -1.0}
+                            PlaneNormal: {X: 0.0, Y: 0.0, Z: 1.0}
                             Range: 1.0
                             Radius: 4.0
+                            Intensity: 5.0
+                        Intensity: 5.0
+        -   Entity:
+                Id: 69b11a74-889f-43e2-842f-159677c28078
+                Name: QuadLight
+                Components:
+                    3a1b15df771ce8da5fb87d66548e309b: !TransformComponent
+                        Id: 00813dcc-2db6-43bd-896e-b6bef82c2854
+                        Position: {X: 0.0, Y: 0.0, Z: 2.0}
+                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children: {}
+                    d7d385cb7f8c50f5cb43251855517a01: !LightComponent
+                        Id: 04597020-a2ea-4047-ad28-40a303e54988
+                        Type: !LightQuad
+                            Color: !ColorRgbProvider
+                                Value: {R: 1.0, G: 1.0, B: 1.0}
+                            Shadow:
+                                Size: Small
+                                BiasParameters: {}
+                            TwoSided: false
+                            PlaneNormal: {X: 0.0, Y: 0.0, Z: -2.0}
+                            Range: 5.0
+                            Radius: 5.0
                             Intensity: 5.0
                         Intensity: 5.0
         -   Entity:

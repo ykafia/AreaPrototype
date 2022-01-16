@@ -1,6 +1,6 @@
-shader LightDisc : LightUtil, LightStream, PositionStream4
+shader LightQuad : LightUtil, LightStream, PositionStream4
 {
-    struct DiscLightData
+    struct QuadLightData
     {
         float4 PositionWS;
         float4 PlaneNormalWS;
@@ -11,7 +11,7 @@ shader LightDisc : LightUtil, LightStream, PositionStream4
         float Intensity;
     };
 
-    struct DiscLightDataInternal
+    struct QuadLightDataInternal
     {
         float4 PositionWS;
         float4 PlaneNormalWS;
@@ -22,7 +22,7 @@ shader LightDisc : LightUtil, LightStream, PositionStream4
         float Intensity;
     };
 
-    void ProcessLight(DiscLightDataInternal light)
+    void ProcessLight(QuadLightDataInternal light)
     {
         float3 lightVectorNorm;
         float attenuation = ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
@@ -35,7 +35,7 @@ shader LightDisc : LightUtil, LightStream, PositionStream4
     float cot ( float x ) { return cos ( x ) / sin ( x ) ; }
     float acot ( float x ) { return atan (1 / x ) ; } 
 
-    float ComputeAttenuation(DiscLightDataInternal light, float3 position, inout float3 lightVectorNorm)
+    float ComputeAttenuation(QuadLightDataInternal light, float3 position, inout float3 lightVectorNorm)
     {
         float3 lightVector = light.PositionWS - position;
         float lightVectorLength = length(lightVector);
