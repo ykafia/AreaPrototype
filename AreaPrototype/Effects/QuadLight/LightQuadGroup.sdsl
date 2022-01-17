@@ -1,0 +1,108 @@
+shader LightQuadGroup<int TMaxLightCount> :
+    LTC,
+    Transformation,
+    DirectLightGroupPerDraw,    // Required for "PrepareDirectLightCore()", "PrepareDirectLight()", "ComputeAttenuation()" and other stuff.
+    LightQuad  // Required for "QuadLightData".
+    // LightQuadAttenuationDefault    // Required for "ComputeAttenuation()"
+{
+    cbuffer PerDraw.Lighting
+    {
+        QuadLightData Lights[TMaxLightCount];
+    }
+
+    override int GetMaxLightCount()
+    {
+        return TMaxLightCount;
+    }
+
+    /// <summary>
+    /// Compute the light color/direction for the specified index within this group
+    /// </summary>
+    override void PrepareDirectLightCore(int lightIndex)
+    {
+        // TODO: Workaraound for SPIR-V compiler. Revert later
+        QuadLightDataInternal data;
+        data.PositionWS = Lights[lightIndex].PositionWS;
+        data.PlaneNormalWS = Lights[lightIndex].PlaneNormalWS;
+        data.Up = Lights[lightIndex].Up;
+        data.Right = Lights[lightIndex].Right;
+        data.Extent = Lights[lightIndex].Extent;
+        data.Color = Lights[lightIndex].Color;
+
+        streams.lightPositionWS = data.PositionWS;
+        streams.lightColor = data.Color;
+        streams.lightAttenuation = 1.0;
+        streams.lightDirectionWS = data.PlaneNormalWS;
+    }
+
+    float ComputeIlluminance(float3 worldPos, float3 lightPos, float3 planeNormal, float3 lightUp, float3 lightRight, float2 extent, float3 N)
+    {
+        float illuminance = 0;
+        float width = extent.y;
+        float height = extent.x;
+        bool horizon = true;
+        if(dot(worldPos - lightPos , planeNormal ) < 0) // On same side of the plane
+        {
+            float halfWidth = width * 0.5;
+            float halfHeight = height * 0.5;
+            float3 p0 = lightPos + lightRight * halfWidth + lightUp * halfHeight ;
+            float3 p1 = lightPos + lightRight * halfWidth + lightUp * - halfHeight ;
+            float3 p2 = lightPos + lightRight * - halfWidth + lightUp * - halfHeight ;
+            float3 p3 = lightPos + lightRight * - halfWidth + lightUp * halfHeight ;
+
+            // contour integral integration ( Lambert )
+            float3 v0 = normalize(p0 - worldPos);
+            float3 v1 = normalize(p1 - worldPos);
+            float3 v2 = normalize(p2 - worldPos);
+            float3 v3 = normalize(p3 - worldPos);
+
+            float fD1 = acos(dot(v0, v1));
+            float fD2 = acos(dot(v1, v2));
+            float fD3 = acos(dot(v2, v3));
+            float fD4 = acos(dot(v3, v0));
+
+            float3 vCross1 = normalize(cross(v0, v1)) * fD1;
+            float3 vCross2 = normalize(cross(v1, v2)) * fD2;
+            float3 vCross3 = normalize(cross(v2, v3)) * fD3;
+            float3 vCross4 = normalize(cross(v3, v0)) * fD4;
+
+            float3 unormLightVector = vCross1 + vCross2 + vCross3 + vCross4;
+            illuminance = PI * 1 / (2 * PI ) * saturate(dot(N, unormLightVector));
+
+            float3 L = normalize(unormLightVector);
+            return illuminance;
+        }
+        return 0;
+    }
+
+    /// <summary>
+    /// Compute the light color/direction for the specified index within this group
+    /// </summary>
+    override void PrepareDirectLight(int lightIndex)
+    {
+        PrepareDirectLightCore(lightIndex);
+
+
+        QuadLightDataInternal light = Lights[lightIndex];
+
+        float illuminance = ComputeIlluminance(streams.PositionWS.xyz, light.PositionWS.xyz, light.PlaneNormalWS.xyz, light.Up.xyz, light.Right.xyz, light.Extent, streams.normalWS);
+
+
+        // Compute NdotL
+        streams.NdotL = max(dot(streams.normalWS, streams.lightDirectionWS), 0.0001f);
+
+        // // Computes the shadowColor
+        streams.shadowColor = ComputeShadow(streams.PositionWS.xyz, lightIndex);
+
+        // // Compute the final color with NdotL
+        streams.lightColorNdotL = streams.lightColor * illuminance * 2 * streams.shadowColor * streams.NdotL * streams.lightDirectAmbientOcclusion;
+        streams.lightSpecularColorNdotL = streams.lightColorNdotL;
+
+        // Mask the light by the color of the projected texture:
+        streams.lightColorNdotL *= ComputeTextureProjection(streams.PositionWS.xyz, lightIndex);    // TODO: Modify "streams.lightColor" instead?
+
+        
+        float3 reflectionVectorWS = reflect(-streams.viewWS, streams.normalWS);
+        streams.lightSpecularColorNdotL *= ComputeSpecularTextureProjection(streams.PositionWS.xyz, reflectionVectorWS, lightIndex);
+    }
+};

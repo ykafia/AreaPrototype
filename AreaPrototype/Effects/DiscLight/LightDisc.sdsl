@@ -2,7 +2,6 @@ shader LightDisc : LightUtil, LightStream, PositionStream4
 {
     struct DiscLightData
     {
-
         float4 PositionWS;
         float4 PlaneNormalWS;
         [Color]
@@ -25,13 +24,29 @@ shader LightDisc : LightUtil, LightStream, PositionStream4
 
     void ProcessLight(DiscLightDataInternal light)
     {
-        
+        float3 lightVectorNorm;
+        float attenuation = ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
+
         streams.lightPositionWS = light.PositionWS;
         streams.lightColor = light.Color;
-        streams.lightDirectionWS = light.PlaneNormalWS;
+        streams.lightAttenuation = attenuation;
+        streams.lightDirectionWS = lightVectorNorm;
     }
     float cot ( float x ) { return cos ( x ) / sin ( x ) ; }
     float acot ( float x ) { return atan (1 / x ) ; } 
 
-    
+    float ComputeAttenuation(DiscLightDataInternal light, float3 position, inout float3 lightVectorNorm)
+    {
+        float3 lightVector = light.PositionWS - position;
+        float lightVectorLength = length(lightVector);
+        lightVectorNorm = lightVector / lightVectorLength;
+
+        float lightRadius = light.Radius;
+        float3 lightDirection = light.PlaneNormalWS;
+
+        float attenuation = GetDistanceAttenuation(lightVectorLength, light.Radius * 0.001);
+        
+        // attenuation *= GetAngularAttenuation(lightVectorNorm, lightDirection, 180, 1);
+        return attenuation;
+    }
 };

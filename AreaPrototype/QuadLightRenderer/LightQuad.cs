@@ -1,0 +1,68 @@
+using System;
+using Stride.Rendering;
+using Stride.Graphics;
+using Stride.Core.Mathematics;
+using Stride.Rendering.Lights;
+using Stride.Core;
+using System.ComponentModel;
+using System.Linq;
+
+namespace AreaPrototype
+{
+    /// <summary>
+    /// An Area light.
+    /// </summary>
+    [DataContract("LightQuad")]
+    [Display("Quad")]
+    public class LightQuad : DirectLightBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LightDisc"/> class.
+        /// </summary>
+        public LightQuad()
+        {
+            Extent = new(1,1);
+            Shadow = new LightDiscShadowMap()
+            {
+                Size = LightShadowMapSize.Small
+            };
+        }
+        // public Texture Texture;
+        public bool TwoSided {get;set;}
+        public Vector2 Extent {get;set;}
+
+
+        public override bool HasBoundingBox => true;
+
+        public override bool Update(RenderLight light)
+        {
+            // Ex = Math.Max(0.01f, Range);
+            return true;
+        }
+
+        public override BoundingBox ComputeBounds(Vector3 positionWS, Vector3 directionWS)
+        {
+            // return new BoundingBox(positionWS - Radius, positionWS + Radius);
+            return new(positionWS - 5 , positionWS + 5);
+        }
+       
+        public override float ComputeScreenCoverage(RenderView renderView, Vector3 position, Vector3 direction)
+        {
+            var targetPosition = new Vector4(position, 1.0f);
+            Vector4.Transform(ref targetPosition, ref renderView.ViewProjection, out Vector4 projectedTarget);
+
+            var d = Math.Abs(projectedTarget.W) + 0.00001f;
+            var r = Math.Max(Extent.X,Extent.Y);
+
+            // Handle correctly the case where the eye is inside the sphere
+            if (d < r)
+                return Math.Max(renderView.ViewSize.X, renderView.ViewSize.Y);
+
+            var coTanFovBy2 = renderView.Projection.M22;
+            var pr = r * coTanFovBy2 / (Math.Sqrt(d * d - r * r) + 0.00001f);
+
+            // Size on screen
+            return (float)pr * Math.Max(renderView.ViewSize.X, renderView.ViewSize.Y) * 2;
+        }
+    }
+}

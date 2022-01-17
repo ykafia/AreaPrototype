@@ -12,9 +12,9 @@ using Stride.Shaders;
 namespace AreaPrototype
 {
     /// <summary>
-    /// Light renderer for <see cref="LightDisc"/>.
+    /// Light renderer for <see cref="LightQuad"/>.
     /// </summary>
-    public class LightDiscGroupRenderer : LightGroupRendererShadow
+    public class LightQuadGroupRenderer : LightGroupRendererShadow
     {
         // private readonly ShadowComparer shadowComparer = new ShadowComparer();
         private FastListStruct<LightDynamicEntry> processedLights = new FastListStruct<LightDynamicEntry>(8);
@@ -41,7 +41,7 @@ namespace AreaPrototype
             }
         }
 
-        public override Type[] LightTypes { get; } = { typeof(LightDisc) };
+        public override Type[] LightTypes { get; } = { typeof(LightQuad) };
 
         public override LightShaderGroupDynamic CreateLightShaderGroup(RenderDrawContext context, ILightShadowMapShaderGroupData shadowShaderGroupData)
         {
@@ -160,7 +160,7 @@ namespace AreaPrototype
                 {
                     nextLight = parameters.LightCollection[parameters.LightIndices[j]];
                     
-                    if (nextLight.Type is LightDisc AreaLight)
+                    if (nextLight.Type is LightQuad AreaLight)
                     {
                         // if (AreaLight.ProjectiveTexture != null) // TODO: Remove this branch?!
                         // {
@@ -347,8 +347,8 @@ namespace AreaPrototype
         private class AreaLightShaderGroup : LightShaderGroupDynamic
         {
             private ValueParameterKey<int> countKey;
-            private ValueParameterKey<DiscLightData> lightsKey;
-            private FastListStruct<DiscLightData> lightsData = new FastListStruct<DiscLightData>(8);
+            private ValueParameterKey<QuadLightData> lightsKey;
+            private FastListStruct<QuadLightData> lightsData = new FastListStruct<QuadLightData>(8);
             private readonly object applyLock = new object();
 
             public ITextureProjectionShaderGroupData TextureProjectionShaderGroupData { get; }
@@ -365,7 +365,7 @@ namespace AreaPrototype
                 // TextureProjectionShaderGroupData?.UpdateLayout(compositionName);
 
                 countKey = DirectLightGroupPerDrawKeys.LightCount.ComposeWith(compositionName);
-                lightsKey = LightDiscGroupKeys.Lights.ComposeWith(compositionName);
+                lightsKey = LightQuadGroupKeys.Lights.ComposeWith(compositionName);
             }
 
             protected override void UpdateLightCount()
@@ -378,7 +378,7 @@ namespace AreaPrototype
                 // Old fixed path kept in case we need it again later
                 //mixin.Mixins.Add(new ShaderClassSource("LightAreaGroup", LightCurrentCount));
                 //mixin.Mixins.Add(new ShaderClassSource("DirectLightGroupFixed", LightCurrentCount));
-                mixin.Mixins.Add(new ShaderClassSource("LightDiscGroup", LightCurrentCount));   // Add the base shader for the light group.
+                mixin.Mixins.Add(new ShaderClassSource("LightQuadGroup", LightCurrentCount));   // Add the base shader for the light group.
                 // ShadowGroup?.ApplyShader(mixin);    // Add the shader for shadow mapping.
                 // TextureProjectionShaderGroupData?.ApplyShader(mixin);   // Add the shader for texture projection.
 
@@ -420,15 +420,16 @@ namespace AreaPrototype
                         var box = (BoundingBox)boundingGet.GetValue(light);
                         if (box.Intersects(ref boundingBox2))
                         {
-                            var AreaLight = (LightDisc)light.Type;
-                            lightsData.Add(new DiscLightData
+                            var AreaLight = (LightQuad)light.Type;
+                            lightsData.Add(new QuadLightData
                             {
                                 PositionWS = light.Position,
                                 PlaneNormalWS = light.Direction,
-                                Range = AreaLight.Range,
-                                Radius = AreaLight.Radius,
                                 Color = light.Color,
-                                Intensity = light.Intensity
+                                Intensity = light.Intensity,
+                                Up = light.WorldMatrix.Up,
+                                Right = light.WorldMatrix.Right,
+                                Extent = AreaLight.Extent
                             });
 
                             // Did we reach max number of simultaneous lights?

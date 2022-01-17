@@ -1,0 +1,76 @@
+shader LightQuad : LightUtil, LightStream, PositionStream4, Math
+{
+    struct QuadLightData
+    {
+        float4 PositionWS;
+        float4 PlaneNormalWS;
+        float4 Up;
+        float4 Right;
+        [Color]
+        float3 Color;
+        float Intensity;
+        float2 Extent;
+    };
+
+    struct QuadLightDataInternal
+    {
+        float4 PositionWS;
+        float4 PlaneNormalWS;
+        float4 Up;
+        float4 Right;
+        [Color]
+        float3 Color;
+        float Intensity;
+        float2 Extent;
+    };
+
+    // void ProcessLight(QuadLightDataInternal light)
+    // {
+    //     float3 lightVectorNorm;
+    //     float attenuation = ComputeAttenuation(); //ComputeAttenuation(light, streams.PositionWS.xyz, lightVectorNorm);
+
+    //     streams.lightPositionWS = light.PositionWS;
+    //     streams.lightColor = light.Color;
+    //     streams.lightAttenuation = attenuation;
+    //     streams.lightDirectionWS = lightVectorNorm;
+    // }
+    
+    float ComputeAttenuation()
+    {
+        return 1.0;
+    }
+
+    float RightPyramidSolidAngle( float dist , float halfWidth , float halfHeight )
+    {
+        float a = halfWidth ;
+        float b = halfHeight ;
+        float h = dist ;
+        return 4 * asin(a * b / sqrt(( a * a + h * h ) * ( b * b + h * h ) ) ) ;
+    }
+
+    float RectangleSolidAngle(
+        float3 worldPos ,
+        float3 p0 , float3 p1 ,
+        float3 p2 , float3 p3 )
+    {
+        float3 v0 = p0 - worldPos ;
+        float3 v1 = p1 - worldPos ;
+        float3 v2 = p2 - worldPos ;
+        float3 v3 = p3 - worldPos ;
+
+        float3 n0 = normalize(cross(v0, v1));
+        float3 n1 = normalize(cross(v1, v2));
+        float3 n2 = normalize(cross(v2, v3));
+        float3 n3 = normalize(cross(v3, v0));
+
+        float g0 = acos(dot(-n0, n1));
+        float g1 = acos(dot(-n1, n2));
+        float g2 = acos(dot(-n2, n3));
+        float g3 = acos(dot(-n3, n0));
+
+        return g0 + g1 + g2 + g3 - 2 * PI ;
+    }
+    
+    float cot ( float x ) { return cos ( x ) / sin ( x ) ; }
+    float acot ( float x ) { return atan (1 / x ) ; } 
+};

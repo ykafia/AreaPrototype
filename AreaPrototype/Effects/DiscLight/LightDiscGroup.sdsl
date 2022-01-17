@@ -25,7 +25,6 @@ shader LightDiscGroup<int TMaxLightCount> :
         data.PositionWS = Lights[lightIndex].PositionWS;
         data.PlaneNormalWS = Lights[lightIndex].PlaneNormalWS;
         data.Radius = Lights[lightIndex].Radius;
-        data.Range = Lights[lightIndex].Range;
         data.Color = Lights[lightIndex].Color;
 
         ProcessLight(data);
@@ -34,19 +33,21 @@ shader LightDiscGroup<int TMaxLightCount> :
     float ComputeIlluminance(float3 positionWS, float3 lightPositionWS, float3 planeNormal, float radius, float3 normalWS)
     {
         float3 lunormalized = lightPositionWS - positionWS;
+
         float3 L = normalize(lunormalized);
         float sqrDist = dot(lunormalized, lunormalized);
 
         bool horizon = false;
         if(!horizon)
         {
-            // return PI * saturate(dot(planeNormal , -L)) * saturate(dot( normalWS , L ) ) / (sqrDist / ( radius * radius ) + 1);
-            float sqrLightRadius = radius * radius;
-            return PI * (sqrLightRadius/(max(sqrLightRadius,sqrDist))) * saturate(dot(normalWS, L));
+            return 
+                PI * saturate(dot(planeNormal, -L)) *
+                saturate(dot(normalWS , L ) ) /
+                (sqrDist / (radius * radius) + 1) ;
         }
         else
         {
-           return 0;
+            return 1 * PI ;
         }
         
     }
@@ -58,7 +59,7 @@ shader LightDiscGroup<int TMaxLightCount> :
     {
         PrepareDirectLightCore(lightIndex);
 
-        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS,Lights[lightIndex].PlaneNormalWS, Lights[lightIndex].Radius, streams.normalWS);
+        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS, Lights[lightIndex].PlaneNormalWS, Lights[lightIndex].Radius, streams.normalWS);
 
         DiscLightDataInternal light = Lights[lightIndex];
 
