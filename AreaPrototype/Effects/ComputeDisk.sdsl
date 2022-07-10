@@ -1,0 +1,12 @@
+shader ComputeDisk : ComputeColor, Texturing
+{
+    override float4 Compute()
+    {
+        var x = streams.TexCoord.x - 0.5;
+        var y = streams.TexCoord.y - 0.5;
+        
+        if(x*x + y*y  < 0.2)
+            return float4(1,1,1,1);
+        else return float4(0,0,0,0);
+    }
+};

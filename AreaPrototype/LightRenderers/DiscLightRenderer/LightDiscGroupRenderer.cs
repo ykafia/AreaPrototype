@@ -28,7 +28,7 @@ namespace AreaPrototype
             public ILightShadowMapRenderer ShadowRenderer;
             // public AreaLightTextureParameters AreaParameters;
 
-            public static AreaLightGroupParameters Null = new AreaLightGroupParameters
+            public static AreaLightGroupParameters Null = new()
             {
                 ShadowType = 0,
                 ShadowRenderer = null,

@@ -99,10 +99,11 @@ shader LightQuadGroup<int TMaxLightCount> :
         streams.lightSpecularColorNdotL = streams.lightColorNdotL;
 
         // Mask the light by the color of the projected texture:
-        streams.lightColorNdotL *= ComputeTextureProjection(streams.PositionWS.xyz, lightIndex);    // TODO: Modify "streams.lightColor" instead?
+        // streams.lightColorNdotL *= ComputeTextureProjection(streams.PositionWS.xyz, lightIndex);    // TODO: Modify "streams.lightColor" instead?
 
         
         float3 reflectionVectorWS = reflect(-streams.viewWS, streams.normalWS);
-        streams.lightSpecularColorNdotL *= ComputeSpecularTextureProjection(streams.PositionWS.xyz, reflectionVectorWS, lightIndex);
+        streams.lightSpecularColorNdotL *= mul(streams.lightColorNdotL,dot(reflectionVectorWS,streams.lightDirectionWS));
+        // streams.lightSpecularColorNdotL *= ComputeSpecularTextureProjection(streams.PositionWS.xyz, reflectionVectorWS, lightIndex);
     }
 };

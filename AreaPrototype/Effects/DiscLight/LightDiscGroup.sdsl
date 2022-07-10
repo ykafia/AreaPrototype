@@ -1,6 +1,7 @@
 shader LightDiscGroup<int TMaxLightCount> :
     LTC,
     Transformation,
+    MaterialPixelALStream,
     DirectLightGroupPerDraw,    // Required for "PrepareDirectLightCore()", "PrepareDirectLight()", "ComputeAttenuation()" and other stuff.
     LightDisc  // Required for "DiscLightData".
     // LightDiscAttenuationDefault    // Required for "ComputeAttenuation()"
@@ -59,7 +60,7 @@ shader LightDiscGroup<int TMaxLightCount> :
     {
         PrepareDirectLightCore(lightIndex);
 
-        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS, Lights[lightIndex].PlaneNormalWS, Lights[lightIndex].Radius, streams.normalWS);
+        float illuminance = ComputeIlluminance(streams.PositionWS, Lights[lightIndex].PositionWS, -Lights[lightIndex].PlaneNormalWS, Lights[lightIndex].Radius, streams.normalWS);
 
         DiscLightDataInternal light = Lights[lightIndex];
 

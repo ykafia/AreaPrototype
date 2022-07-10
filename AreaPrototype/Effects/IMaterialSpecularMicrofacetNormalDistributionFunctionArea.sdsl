@@ -1,0 +1,10 @@
+﻿/// <summary>
+/// Interface for a microfacet Normal Distribution function
+/// </summary>
+shader IMaterialSpecularMicrofacetNormalDistributionFunctionArea : MaterialPixelShadingStream, BRDFMicrofacet
+{
+    float Compute()
+    {
+        return NormalDistributionBlinnPhong(streams.alphaRoughness, streams.NdotH);
+    }
+};

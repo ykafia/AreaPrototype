@@ -1,0 +1,19 @@
+
+/// <summary>
+/// Interface for a microfacet Normal Distribution function
+/// </summary>
+shader MaterialSpecularMicrofacetNormalAreaDistributionGGX : IMaterialSpecularMicrofacetNormalDistributionFunction
+{
+    stream float myVar;
+    float NormalDistributionGGXArea(float alphaR, float nDotH, float type)
+    {
+        var alphaR2 =  alphaR * alphaR;
+        var d = max(nDotH * nDotH * (alphaR2 - 1) + 1, 0.0001);
+        return alphaR2 / (PI * d * d);
+    }
+    override float Compute()
+    {
+        var x = streams.myVar;
+        return NormalDistributionGGXArea(streams.alphaRoughness, streams.NdotH, 0);
+    }
+};

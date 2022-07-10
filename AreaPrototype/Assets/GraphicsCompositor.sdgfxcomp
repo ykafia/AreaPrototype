@@ -83,8 +83,8 @@ RenderFeatures:
                     cf0c6bd4198b4cc4aaaab5b54870bdfd: !Stride.Rendering.Lights.LightSpotGroupRenderer,Stride.Rendering {}
                     451af18f3f5c4187cf3fe5f33feb46b1: !Stride.Rendering.LightProbes.LightProbeRenderer,Stride.Rendering {}
                     34d9c78cd399d168332b7e4a28f5f97e*: !AreaPrototype.LightSphereGroupRenderer,AreaPrototype {}
-                    8c935ac89da357d71e34ecbc076efa57*: !AreaPrototype.LightDiscGroupRenderer,AreaPrototype {}
                     85cf5e4bffd944859168a1d8a0dfac0c*: !AreaPrototype.LightQuadGroupRenderer,AreaPrototype {}
+                    19ad95a709a8a341dd10fd212e0a05d8*: !AreaPrototype.LightDiscGroupRenderer,AreaPrototype {}
                 ShadowMapRenderer: !Stride.Rendering.Shadows.ShadowMapRenderer,Stride.Rendering
                     Renderers:
                         7c3d3d4c86834c3551bacde2527b3836: !Stride.Rendering.Shadows.LightDirectionalShadowMapRenderer,Stride.Rendering
@@ -187,12 +187,15 @@ SharedRenderers:
             Enabled: false
             DOFAreas: {X: 0.5, Y: 6.0, Z: 50.0, W: 200.0}
         BrightFilter:
+            Enabled*: false
             Color: {R: 1.0, G: 1.0, B: 1.0}
         Bloom:
+            Enabled*: false
             Distortion: {X: 1.0, Y: 1.0}
             Afterimage:
                 Enabled: false
         LightStreak:
+            Enabled*: false
             Attenuation: 0.7
         LensFlare: {}
         ColorTransforms:

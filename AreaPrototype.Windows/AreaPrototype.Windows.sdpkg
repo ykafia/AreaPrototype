@@ -14,4 +14,5 @@ OutputGroupDirectories: {}
 ExplicitFolders: []
 Bundles: []
 TemplateFolders: []
-RootAssets: []
+RootAssets:
+    - 806eb996-b27c-44dd-95b7-8bfd34d30b40:Emissive

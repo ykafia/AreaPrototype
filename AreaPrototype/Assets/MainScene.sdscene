@@ -14,6 +14,35 @@ Hierarchy:
         - ref!! 41c509e0-bb9b-4496-84f8-2a43a82326a6
     Parts:
         -   Entity:
+                Id: 37390a7c-4676-4880-a0b2-440465965678
+                Name: SomOther
+                Components:
+                    a0f3697a9e51e7eee4a24e08bf7da12b: !TransformComponent
+                        Id: ab7b102e-22be-4c98-b82c-a581a011be24
+                        Position: {X: 0.0, Y: 0.16416772, Z: -3.020881}
+                        Rotation: {X: 0.13597073, Y: 0.0, Z: 0.0, W: 0.9907128}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children: {}
+                    894c4978405228dc8f1501fe70869329: !LightComponent
+                        Id: 8fb0f9df-874b-4afc-b5ef-2990a6e21834
+                        Type: !LightDisc
+                            Color: !ColorRgbProvider
+                                Value: {R: 1.0, G: 1.0, B: 1.0}
+                            Shadow:
+                                Size: Small
+                                BiasParameters: {}
+                            TwoSided: false
+                            PlaneNormal: {X: 0.0, Y: 0.0, Z: 0.0}
+                            Range: 1.0
+                            Radius: 2.0
+                            Intensity: 0.0
+                        Intensity: 2.0
+                    adb7a974d7a1f19a2a5dcb03a5d9cd8a: !ModelComponent
+                        Id: e31aaece-3d43-4f75-b924-bae903ca5d5f
+                        Model: 96031231-6c1e-4866-a13d-902f56248210:Plane
+                        Materials:
+                            6374245ce7d0d94a620516b97f05ba80~0: dca17e98-fb0c-4b77-b0b9-4f4e49fe649a:Disk
+        -   Entity:
                 Id: 41c509e0-bb9b-4496-84f8-2a43a82326a6
                 Name: LightControl
                 Components:
@@ -23,80 +52,11 @@ Hierarchy:
                         Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
                         Scale: {X: 1.0, Y: 1.0, Z: 1.0}
                         Children:
-                            94e3d4f2398f8b8d9473f4ea938b8dee: ref!! 17439884-d95e-4e20-996c-05a3ecb186c5
                             f21fe642d31d4cbaf47dabf9fad93b11: ref!! d4bedb6d-6e0b-4775-b52d-a2b18e4ab4c1
-                            98198bad704f6b8e3ee60bd4f34188bf: ref!! fb949df2-7491-47b2-bbca-151ef99ae2dd
-                            d34bbf0b6bbfe5da71056fde7813f938: ref!! 00813dcc-2db6-43bd-896e-b6bef82c2854
+                            c60cb815bf4d4992241f9d68485bd669: ref!! ab7b102e-22be-4c98-b82c-a581a011be24
                     3f97756e8699b034206f0d528f2c88ed: !AreaPrototype.MoveLights,AreaPrototype
                         Id: f01672bb-90e8-4537-ad71-cdf3b16b824d
                         InitPos: {X: 0.0, Y: 0.0, Z: 0.0}
-        -   Entity:
-                Id: 51f0727c-9b49-4d10-a6e9-198cf0eb7623
-                Name: SphereLight
-                Components:
-                    cd6bd7a1f5a83a18fa0d81920eeb4d70: !TransformComponent
-                        Id: 17439884-d95e-4e20-996c-05a3ecb186c5
-                        Position: {X: -2.0, Y: 0.0, Z: 0.0}
-                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
-                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
-                        Children: {}
-                    98f9f278404740bf53e4adcc987cbf92: !LightComponent
-                        Id: b5d0c66d-470d-44e8-bb42-4f9d3a5f1977
-                        Type: !LightSphere
-                            Color: !ColorRgbProvider
-                                Value: {R: 1.0, G: 1.0, B: 1.0}
-                            Shadow:
-                                Size: Small
-                                BiasParameters: {}
-                            Intensity: 5.0
-                            TwoSided: false
-                            Radius: 1.0
-                        Intensity: 5.0
-        -   Entity:
-                Id: 637ceb09-c25f-40da-ba37-4ffeb1e7eaf9
-                Name: DiscLight
-                Components:
-                    e7bdae1bb0ea826fbf5cfdd3255fbd91: !TransformComponent
-                        Id: fb949df2-7491-47b2-bbca-151ef99ae2dd
-                        Position: {X: 0.0, Y: 0.0, Z: -2.0}
-                        Rotation: {X: 1.1238265E-08, Y: 1.0, Z: -4.912402E-16, W: -4.371139E-08}
-                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
-                        Children: {}
-                    69838eda2fd93200686e04fdd11c8559: !LightComponent
-                        Id: 8f06dc8e-807b-4900-a42a-ab25fa3cb8ea
-                        Type: !LightDisc
-                            Color: !ColorRgbProvider
-                                Value: {R: 1.0, G: 1.0, B: 1.0}
-                            Shadow:
-                                Size: Small
-                                BiasParameters: {}
-                            TwoSided: false
-                            PlaneNormal: {X: 0.0, Y: 0.0, Z: 1.0}
-                            Range: 1.0
-                            Radius: 4.0
-                            Intensity: 5.0
-                        Intensity: 5.0
-        -   Entity:
-                Id: 69b11a74-889f-43e2-842f-159677c28078
-                Name: QuadLight
-                Components:
-                    3a1b15df771ce8da5fb87d66548e309b: !TransformComponent
-                        Id: 00813dcc-2db6-43bd-896e-b6bef82c2854
-                        Position: {X: 0.0, Y: -0.45, Z: 2.5}
-                        Rotation: {X: 0.70710677, Y: 0.0, Z: 0.0, W: 0.70710677}
-                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
-                        Children: {}
-                    d7d385cb7f8c50f5cb43251855517a01: !LightComponent
-                        Id: 04597020-a2ea-4047-ad28-40a303e54988
-                        Type: !LightQuad
-                            Color: !ColorRgbProvider
-                                Value: {R: 1.0, G: 1.0, B: 1.0}
-                            Shadow:
-                                Size: Small
-                                BiasParameters: {}
-                            TwoSided: false
-                            Extent: {X: 1.0, Y: 8.0}
-                        Intensity: 10.0
         -   Entity:
                 Id: 69c76b62-5f38-4600-af3d-7cf85cad1bc6
                 Name: Point light
@@ -104,7 +64,7 @@ Hierarchy:
                     b3d307eb78cac2e9ecbda98344c876d9: !TransformComponent
                         Id: d4bedb6d-6e0b-4775-b52d-a2b18e4ab4c1
                         Position: {X: 2.0, Y: 0.0, Z: 0.0}
-                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Rotation: {X: 0.0, Y: 1.0, Z: 0.0, W: -4.371139E-08}
                         Scale: {X: 1.0, Y: 1.0, Z: 1.0}
                         Children: {}
                     01f79f8c5da80e16d022d585a99a2562: !LightComponent
@@ -143,7 +103,8 @@ Hierarchy:
                     5470b0b0b696387831b688adbb84537c: !ModelComponent
                         Id: 76d2b1d2-fe3c-4a5c-8011-850040bc45b6
                         Model: 1cd90587-728e-47cb-8398-b55324bf4116:Ground
-                        Materials: {}
+                        Materials:
+                            ed6883c73ad5ebb5a29324c7490d258a~0: 00395cb0-ac00-4a87-a06a-50adb136b992:Ground Material
         -   Entity:
                 Id: b034d256-6e0c-4c90-8c73-c78118328263
                 Name: Skybox

@@ -1,0 +1,6 @@
+
+
+shader MaterialPixelShadingALStream : MaterialPixelALStream, LightStream
+{
+    
+};

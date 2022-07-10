@@ -1,0 +1,4 @@
+shader MaterialPixelALStream
+{
+    stream float lightType2;
+};
